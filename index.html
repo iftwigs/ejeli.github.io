@@ -76,7 +76,6 @@
       var stored = localStorage.getItem('ejeli-theme');
       var btn = document.getElementById('theme-toggle');
       if (stored === 'light') {
-        document.documentElement.classList.add('light');
         btn.textContent = 'dark';
       }
       btn.addEventListener('click', function () {
