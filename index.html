@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ejeli</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- apply stored theme before first paint to prevent flash -->
+  <script>if(localStorage.getItem('ejeli-theme')==='light')document.documentElement.classList.add('light');</script>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo">EJELI</a>
+        <div class="nav-links">
+          <a href="gallery.html">gallery</a>
+          <a href="#about">about</a>
+          <a href="#contact">contact</a>
+          <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">light</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <!-- Hero -->
+      <section class="hero">
+        <p class="tagline">i draw, code, do standup and create <span class="accent">other things that don't exist yet</span></p>
+
+        <p class="section-label">selected works</p>
+        <div class="gallery-teaser">
+          <div class="artwork-placeholder"></div>
+          <div class="artwork-placeholder"></div>
+          <div class="artwork-placeholder"></div>
+          <div class="artwork-placeholder"></div>
+        </div>
+        <a href="gallery.html" class="view-all">→ view all works</a>
+      </section>
+
+      <!-- About + Artist Statement -->
+      <section class="about-section" id="about">
+        <div class="about-grid">
+          <div>
+            <p class="section-label">about</p>
+            <p class="about-body">&lt;...&gt;</p>
+          </div>
+          <div>
+            <p class="section-label">artist statement</p>
+            <p class="about-body">&lt;...&gt;</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer id="contact">
+    <div class="container">
+      <div class="footer-inner">
+        <span class="section-label">contact</span>
+        <span class="footer-links">
+          <a href="mailto:k4www4@gmail.com">k4www4@gmail.com</a>
+          &nbsp;/&nbsp;
+          <a href="https://ejeli.com" target="_blank" rel="noopener">ejeli.com</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var stored = localStorage.getItem('ejeli-theme');
+      var btn = document.getElementById('theme-toggle');
+      if (stored === 'light') {
+        document.documentElement.classList.add('light');
+        btn.textContent = 'dark';
+      }
+      btn.addEventListener('click', function () {
+        var isLight = document.documentElement.classList.toggle('light');
+        localStorage.setItem('ejeli-theme', isLight ? 'light' : 'dark');
+        btn.textContent = isLight ? 'dark' : 'light';
+      });
+    })();
+  </script>
+
+</body>
+</html>
