@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)file:///Users/apple/Downloads/v7_edited.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surface Area Growth System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f5f4ee;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  .header {
+    border-bottom: 3px solid #1a1a1a;
+    padding-bottom: 22px;
+    margin-bottom: 36px;
+  }
+  .header-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .progress-wrap { margin-top: 18px; }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 5px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: #ddd;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #E1306C, #4a4ab0);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .week { margin-bottom: 14px; }
+  .week-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: #f5f5f0;
+    color: #1a1a1a;
+    border: 2px solid #ccc;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .week-header:hover { border-color: #999; }
+  .week.open .week-header {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+  }
+  .week-title { font-size: 14px; font-weight: 900; letter-spacing: 0.5px; }
+  .week-subtitle { font-size: 11px; opacity: 0.65; margin-top: 3px; }
+  .week-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    opacity: 0.6;
+    white-space: nowrap;
+    margin-left: 14px;
+    flex-shrink: 0;
+  }
+  .week-body {
+    display: none;
+    border: 2px solid #1a1a1a;
+    border-top: none;
+    padding: 6px 0;
+  }
+  .week.open .week-body { display: block; }
+
+  .day {
+    padding: 14px 18px;
+    border-bottom: 1px solid #eee;
+  }
+  .day:last-child { border-bottom: none; }
+  .day-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .day-num { font-size: 22px; font-weight: 900; min-width: 34px; }
+  .day-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .day-stamp {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: #aaa;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .day-stamp.stamped {
+    color: #4a4ab0;
+  }
+
+  .task {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 12px;
+    margin-bottom: 5px;
+    border-left: 3px solid;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    user-select: none;
+  }
+  .task.done { opacity: 0.4; }
+  .task input[type="checkbox"] {
+    margin-top: 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+  }
+  .task-content { flex: 1; min-width: 0; }
+  .task-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 3px;
+  }
+  .task-platform {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .task-time {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: #aaa;
+  }
+  .task-text {
+    font-size: 13px;
+    line-height: 1.55;
+    color: #333;
+  }
+  .task-text code {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: rgba(0,0,0,0.07);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .task.done .task-text { text-decoration: line-through; }
+
+  .task.p-insta { background: rgba(225,48,108,0.06); border-left-color: rgba(225,48,108,0.3); }
+  .task.p-insta .task-platform { color: #E1306C; }
+  .task.p-insta input { accent-color: #E1306C; }
+
+  .task.p-x { background: rgba(120,120,120,0.06); border-left-color: rgba(120,120,120,0.3); }
+  .task.p-x .task-platform { color: #555; }
+  .task.p-x input { accent-color: #555; }
+
+  .task.p-both { background: rgba(80,80,200,0.05); border-left-color: rgba(80,80,200,0.2); }
+  .task.p-both .task-platform { color: #4a4ab0; }
+  .task.p-both input { accent-color: #4a4ab0; }
+
+  .task.p-web { background: rgba(20,160,90,0.06); border-left-color: rgba(20,160,90,0.35); }
+  .task.p-web .task-platform { color: #148a50; }
+  .task.p-web input { accent-color: #148a50; }
+
+  .task.p-prep { background: rgba(210,140,0,0.07); border-left-color: rgba(210,140,0,0.45); }
+  .task.p-prep .task-platform { color: #b07800; }
+  .task.p-prep input { accent-color: #b07800; }
+
+  .task.p-pin { background: rgba(230,0,35,0.06); border-left-color: rgba(230,0,35,0.3); }
+  .task.p-pin .task-platform { color: #E60023; }
+  .task.p-pin input { accent-color: #E60023; }
+
+  .task.done { background: rgba(0,0,0,0.015) !important; border-left-color: #ccc !important; }
+
+  .legend {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .legend-item {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    border: 1px solid;
+  }
+  .legend-ig   { color: #E1306C; background: rgba(225,48,108,0.06); border-color: rgba(225,48,108,0.3); }
+  .legend-x    { color: #555;    background: rgba(120,120,120,0.06); border-color: rgba(120,120,120,0.3); }
+  .legend-both { color: #4a4ab0; background: rgba(80,80,200,0.05);  border-color: rgba(80,80,200,0.2); }
+  .legend-web  { color: #148a50; background: rgba(20,160,90,0.06);  border-color: rgba(20,160,90,0.35); }
+  .legend-prep { color: #b07800; background: rgba(210,140,0,0.07);  border-color: rgba(210,140,0,0.45); }
+  .legend-pin  { color: #E60023; background: rgba(230,0,35,0.06);   border-color: rgba(230,0,35,0.3); }
+
+  .principles {
+    margin-top: 36px;
+    padding: 22px;
+    border: 2px dashed #bbb;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #555;
+  }
+  .principles-title {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    margin-bottom: 10px;
+    color: #1a1a1a;
+  }
+  .principles p { margin-bottom: 7px; }
+  .principles p:last-child { margin-bottom: 0; }
+  .principles strong { color: #1a1a1a; }
+
+  @media (max-width: 500px) {
+    .container { padding: 20px 12px 48px; }
+    .header h1 { font-size: 24px; }
+    .day { padding: 12px 12px; }
+    .task { padding: 8px 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-meta">30-Day Plan · Do it at your own pace</div>
+    <h1>Surface Area Growth System</h1>
+    <div class="header-sub">~15–30 min/day · Instagram (242) + X (33) + Pinterest · Custom domain ✓ · GitHub Pages</div>
+    <div class="legend">
+      <span class="legend-item legend-ig">IG</span>
+      <span class="legend-item legend-x">𝕏</span>
+      <span class="legend-item legend-both">BOTH</span>
+      <span class="legend-item legend-web">SITE</span>
+      <span class="legend-item legend-prep">📷 PREP</span>
+      <span class="legend-item legend-pin">PIN</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="progress-text">0 of 0 tasks done</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="weeks-container"><div class="week open" id="week-0"><button class="week-header">
+    <div>
+      <div class="week-title">WEEK 1 — LAY THE GROUND</div>
+      <div class="week-subtitle">Profiles, first posts, get the site live</div>
+    </div>
+    <div class="week-count" id="week-count-0">16/22 ✓</div>
+  </button><div class="week-body"><div class="day">
+      <div class="day-head">
+        <span class="day-num">01</span>
+        <span class="day-label">Day 01</span>
+      <span class="day-stamp stamped">✓ May 7</span></div>
+    <div class="task p-both done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Set up a Linktree with 3 placeholder links: Portfolio (your site), Commissions (Google Form), Shop (placeholder). Add to both bios.</div>
+        </div>
+      </div><div class="task p-both done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Audit your bios on IG and X — consistent profile pics, handles, identity line.</div>
+        </div>
+      </div><div class="task p-insta done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Build 3 hashtag sets (10–15 tags each): medium, style, community. Save in notes for quick pasting.</div>
+        </div>
+      </div><div class="task p-x done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Follow 10 artists you admire. Turn on notifications for 3 — early replies to their posts get seen by their whole audience.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">02</span>
+        <span class="day-label">Day 02</span>
+      <span class="day-stamp stamped">✓ May 8</span></div>
+    <div class="task p-insta done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post a finished piece — your best recent work. Hashtag set #1. Caption about your process: what inspired it, what was hard, what surprised you.</div>
+        </div>
+      </div><div class="task p-x done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">Post the same piece with a short personal thought — not just 'new work' but something like 'This one fought me for 3 days. Finally figured out the light.'</div>
+        </div>
+      </div><div class="task p-both done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~4 min</span>
+          </div>
+          <div class="task-text">Reply genuinely to 3 other artists' posts. Say something specific about their work, not just emojis.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">03</span>
+        <span class="day-label">Day 03</span>
+      <span class="day-stamp stamped">✓ May 9</span></div>
+    <div class="task p-x done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Quote-retweet or reply to a post by a bigger artist (500–5K followers) with a genuine take. Their audience sees you.</div>
+        </div>
+      </div><div class="task p-both done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">Engage: leave 5 meaningful comments across both platforms on posts in your niche. Target 500–5K accounts.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">04</span>
+        <span class="day-label">Day 04</span>
+      <span class="day-stamp stamped">✓ May 10</span></div>
+    <div class="task p-web done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">SITE AUDIT — open your repo on GitHub, then your live preview or local version in a browser. Answer these 3 questions in a notes doc: (1) Within 5 seconds, can a stranger tell what kind of art you make? (2) Is there one clear thing to click to buy or inquire? (3) Does anything look broken on mobile? (DevTools → Toggle device toolbar → iPhone 12 Pro.) Write down every 'no' — these are your fix list. 10 minutes max, no fixing yet.</div>
+        </div>
+      </div><div class="task p-insta done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Post a Story showing a WIP — sketch, desk, tools. Poll sticker: 'Which direction should I take this?' Stories build intimacy and keep you in the stories tray.</div>
+        </div>
+      </div><div class="task p-x done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Share a WIP photo with a hot take. 'Hot take: the ugly middle stage of a painting is the most important part.'</div>
+        </div>
+      </div><div class="task p-prep done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR NEXT DAY — photograph 'Dialogues. Part V: blue' for posting. You want one clean, well-lit shot of the full piece. Natural light near a window works best — avoid harsh overhead or flash. Shoot portrait orientation (it's A4). Take 3–4 variants (slightly different angles/crops) and pick the sharpest one. No staging needed, just the painting. You'll post this tomorrow as a single image.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">05</span>
+        <span class="day-label">Day 05</span>
+      <span class="day-stamp stamped">✓ Mon, May 11</span></div>
+    <div class="task p-web done">
+        <input type="checkbox" checked="">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">DEPLOY TO GITHUB PAGES + POINT YOUR DOMAIN. Two steps: (1) In your repo on GitHub, go to Settings → Pages → set Source to 'Deploy from a branch', pick main (or master), folder / (root). Hit Save. GitHub gives you a yourname.github.io URL — click it to confirm it loads. (2) Point your domain: go to your registrar (Namecheap, Porkbun, etc.), find DNS settings. Add 4 A records pointing to: 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153. Add a CNAME record: www → yourusername.github.io. Back in GitHub Pages settings, enter your custom domain and check 'Enforce HTTPS'. In your repo root, create a file called <code>CNAME</code> (no extension) containing just your domain, e.g. <code>yourname.com</code>. DNS takes up to 24h to propagate — the .github.io URL works immediately. Update your Linktree and both bios with your domain.</div>
+        </div>
+      </div><div class="task p-insta done">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">Post 'Dialogues. Part V: blue' as a single finished piece. No process shots needed — the painting carries itself. Use this caption as a starting point:<br><br><em>There's a door in Lisbon I keep thinking about.<br><br>Praça José Fontana — late afternoon, the kind of light that makes a building look like it's exhaling. The red door, the arched window, a tree pulling everything slightly sideways. I painted it in watercolour and finished it digitally. I wasn't trying to document it. I was trying to hold the feeling of standing there.<br><br>This is part of an ongoing series called Dialogues — conversations between places and the light that makes them briefly strange.<br><br>Part VI is already in my head.</em><br><br>End with 3–5 hashtags from your saved sets: architecture ones (#urbanwatercolor #architectureart #lisbonart) plus your style tags. The series name 'Dialogues' in the caption seeds curiosity about future parts — that's a follow hook.</div>
+        </div>
+      </div><div class="task p-x done">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Post the painting with a shorter, punchier version. Try: <em>'Painted a door in Lisbon that I haven't been able to stop thinking about. Watercolour + digital. Part V of an ongoing series called Dialogues.'</em> — then add one more line with a genuine thought, e.g. <em>'Something about late afternoon light in southern Europe makes ordinary buildings look like they're about to say something.'</em> The series mention does the same work as on IG — it signals there's more coming and gives people a reason to follow.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">06</span>
+        <span class="day-label">Day 06</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">CONFIRM DEPLOY. Check your custom domain is live (may have propagated overnight). Open yourname.com — does it load? Does it show HTTPS? If not yet, give it more hours. While waiting: open index.html and make sure your <code>&lt;title&gt;</code> tag says 'Your Name — Artist', not 'index' or blank. Commit and push if you changed anything.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">Set up your commission inquiry form (Google Forms — free). Fields: name, what they want, size/medium preference, budget range, timeline. Update your Linktree commissions link to point here.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Jump into a trending art conversation or art hashtag. Reply to 5 people with genuine takes — not self-promo, just be interesting.</div>
+        </div>
+      </div><div class="task p-prep">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR DAY 8 — take 3–5 photos of your creative routine: your desk set up, hands on paper/canvas/tablet, your tools laid out, a cup of tea/coffee next to a sketchbook. Natural light works best. These are for a 'day in the life' Stories post. No staging needed — just document what's real.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">07</span>
+        <span class="day-label">Day 07</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~15 min</span>
+          </div>
+          <div class="task-text">FIX #1 — META TAGS. Open your index.html <code>&lt;head&gt;</code>. Add if missing: <code>&lt;meta name="description" content="[Your name] — [medium] artist. [1 sentence about your work]."&gt;</code> and <code>&lt;meta property="og:image" content="https://yourdomain.com/img/featured.jpg"&gt;</code>. The og:image is what shows when someone shares your link on IG or X — a good preview meaningfully increases clicks. Use the full URL to one of your best pieces. Commit and push.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">REST from posting. Engage only: 5 comments across platforms. Screenshot follower counts — this is your Week 1 baseline.</div>
+        </div>
+      </div></div></div></div><div class="week" id="week-1"><button class="week-header">
+    <div>
+      <div class="week-title">WEEK 2 — FIND YOUR VOICE</div>
+      <div class="week-subtitle">Experiment with formats. Fix site structure. Build your shop.</div>
+    </div>
+    <div class="week-count" id="week-count-1">0/23 ✓</div>
+  </button><div class="week-body"><div class="day">
+      <div class="day-head">
+        <span class="day-num">08</span>
+        <span class="day-label">Day 08</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~15 min</span>
+          </div>
+          <div class="task-text">FIX #2 — HOMEPAGE HEADLINE + ABOUT SNIPPET. Open index.html. (1) Find your main <code>&lt;h1&gt;</code> — update it to your name + what you make, e.g. 'Jane Doe — Watercolour &amp; Ink'. Add a subtitle: <code>&lt;p class="tagline"&gt;Paintings about [subject/theme]&lt;/p&gt;</code>. (2) Add a short 2–3 sentence bio excerpt on the homepage with a 'Read more →' link to your about page. Collectors want to feel like they know you before they click deeper. Commit and push.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~7 min</span>
+          </div>
+          <div class="task-text">Post a 'day in the life' Stories using the routine shots you prepped — 3–5 frames of your creative space and process. Question sticker: 'What should I draw next?' Interactive stickers boost story reach.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">Post a standalone text tweet — a thought, joke, or observation about being an artist. 'Just realised I've been painting the same shade of blue for 6 months. Am I ok?' Show personality — this is how you build a following on X.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">3 genuine replies to others.</div>
+        </div>
+      </div><div class="task p-prep">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR DAY 11 — while working on a piece this week, photograph both ends: what you originally planned/sketched vs how it actually turned out. Even if the piece isn't done, grab a reference shot of your rough concept (a sketch, a reference image, a colour palette you tried) alongside where the piece is now. You'll use this for an 'Expectation vs Reality' carousel.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">09</span>
+        <span class="day-label">Day 09</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">FIX #3 — ABOUT PAGE. Open about.html (or your about section). It needs: (1) A real photo of you. If you hate photos, hands-at-work or a studio shot counts. (2) Bio in first person: what you make, why, where you're based, one personal detail. 3–5 sentences. (3) Your email clickable: <code>&lt;a href="mailto:you@email.com"&gt;you@email.com&lt;/a&gt;</code>. Commit and push.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post a finished piece with a longer personal caption — tell a story about why you made it. Longer captions increase time-on-post, which the algorithm reads as engagement.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~4 min</span>
+          </div>
+          <div class="task-text">Post the piece + an honest opinion about art/creativity. 'Unpopular opinion: buying prints is just as valid as buying originals.' Opinions get engagement because people can't resist weighing in.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">10</span>
+        <span class="day-label">Day 10</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">FIX #4 — GALLERY AUDIT. Go through every image on your gallery/portfolio page. Remove or hide anything that doesn't represent your best current work. Aim for 6–12 pieces you're proud of — 7 strong pieces beats 20 mixed ones. If it's just a folder dump, pick your best 8, rename them 01.jpg, 02.jpg… and update the HTML to only show those. Commit and push.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">Ask your followers: 'What's a subject you never get tired of seeing drawn?' Open questions get replies and boost visibility.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">Engage: 5 comments on 500–5K accounts across both platforms.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">11</span>
+        <span class="day-label">Day 11</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post an 'Expectation vs Reality' carousel using the shots you prepped on Day 8 — what you originally planned vs what happened. Relatable art content gets shared. Carousels have the highest save rate of any IG format.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~4 min</span>
+          </div>
+          <div class="task-text">Same concept as a single image + self-deprecating caption. Humor + vulnerability = follows on X.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">3 replies to others.</div>
+        </div>
+      </div><div class="task p-prep">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR DAY 13 — set up your phone on a stand or prop it up while you work. Record a time-lapse of yourself drawing for 15–20 minutes (iPhone: built-in time-lapse in Camera app; Android: similar). Alternatively, take a photo of a piece in a completely different state than it is now — a before/after. You'll use this for a Reel.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">12</span>
+        <span class="day-label">Day 12</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">FIX #5 — MOBILE CHECK. Open Chrome DevTools (F12) → Toggle device toolbar → test on 'iPhone 12 Pro' (390px) AND 'iPad' (768px). Look for: text too small, images overflowing, buttons under 44px tall, horizontal scroll. Fastest fixes: add <code>img { max-width: 100%; height: auto; }</code> and <code>body { overflow-x: hidden; }</code> to your CSS if not already there. Fix the worst offenders. Commit and push.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Find an art challenge or prompt list. Participate with a quick sketch or take — challenges put you in front of people actively browsing that tag.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~7 min</span>
+          </div>
+          <div class="task-text">Engage only: 5 comments in your hashtag communities. Work through the Recent tab on a hashtag, not just Following.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">13</span>
+        <span class="day-label">Day 13</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post a Reel using the time-lapse or before/after you filmed on Day 11 or 12. Add trending audio. Keep it under 30 seconds — shorter Reels get replayed, and replays count as views.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">Hot take about art. 'Art school taught me a lot about art history and almost nothing about actually making a living as an artist.'</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~4 min</span>
+          </div>
+          <div class="task-text">4 replies.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">14</span>
+        <span class="day-label">Day 14</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">FIX #6 — COMMISSION PAGE. Create commissions.html (or add a section). Include: (1) 2–3 sentences about what kinds of commissions you take. (2) Your Google Form embedded or linked. (3) Rough price range — even 'starting at $X' filters out time-wasters. Add a 'Commissions' link to your <code>&lt;nav&gt;</code>. Update your Linktree commissions link to this page. Commit and push.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">Set up a simple shop: Big Cartel (free up to 5 products) or Ko-fi. List 1–3 pieces. Update Linktree shop link. Review the week — which post got most engagement? Write down your top 2 content types.</div>
+        </div>
+      </div></div></div></div><div class="week" id="week-2"><button class="week-header">
+    <div>
+      <div class="week-title">WEEK 3 — DOUBLE DOWN</div>
+      <div class="week-subtitle">Lean into what works. Polish &amp; analytics. Expand your network.</div>
+    </div>
+    <div class="week-count" id="week-count-2">0/22 ✓</div>
+  </button><div class="week-body"><div class="day">
+      <div class="day-head">
+        <span class="day-num">15</span>
+        <span class="day-label">Day 15</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">FIX #7 — ADD ANALYTICS. Sign up free at goatcounter.com. They give you one script tag — paste it before <code>&lt;/body&gt;</code> in every HTML page (index, gallery, about, commissions at minimum). Commit and push. Within 24h you'll see page views, which pages people visit, and where they came from.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post your best content type from Week 2 — double down on what worked.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">Cross-post + add a personal thought or behind-the-scenes detail you didn't share on IG.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~4 min</span>
+          </div>
+          <div class="task-text">Engage: 5 comments on NEW accounts you haven't interacted with before.</div>
+        </div>
+      </div><div class="task p-prep">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR DAY 16 — share someone else's art you genuinely love. Find the post on IG or X now and screenshot it, or save the URL. Have the artist's handle ready. Tomorrow you'll share it to Stories on IG and tag them — this takes 30 seconds if you've already found the piece. Also think of one genuine thing to say about why you love it.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">16</span>
+        <span class="day-label">Day 16</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">FIX #8 — IMAGE OPTIMIZATION. In your repo, find any image files over 500KB. Go to squoosh.app (free, browser-based) — drag each oversized image in, convert to WebP at ~80% quality, download, replace the old file. Also add <code>loading="lazy"</code> to every <code>&lt;img&gt;</code> tag that isn't your hero image. Faster gallery = better collector experience. Commit and push.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Mini-thread: 'Things I've learned from drawing every day.' Genuine insights. Threads get bookmarked and have longer shelf life than single tweets.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">Stories: share the art you found yesterday and tag the artist. Say why you love it in 1–2 sentences. They'll often reshare to their audience.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">17</span>
+        <span class="day-label">Day 17</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~15 min</span>
+          </div>
+          <div class="task-text">Engagement blitz: spend all 15 min leaving thoughtful comments on 10 posts across both platforms. Today is pure surface-area expansion — no posting, just showing up in other people's comment sections.</div>
+        </div>
+      </div><div class="task p-prep">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR DAY 18 — while working today, photograph your current piece against a clean background (floor, wall, desk). You'll post it next with a 'tag a friend' caption. Also, look at your photo library and pick your second-strongest finished piece from this month — you may need it as a backup if current work isn't ready.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">18</span>
+        <span class="day-label">Day 18</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">FIX #9 — COLLECTOR-READY GALLERY CAPTIONS. Go through your gallery HTML. For each piece add: (1) Title. (2) Medium and size. (3) Status: Available / Sold / Commission similar. (4) Price or 'DM to inquire'. Even a simple caption under each image works. Signals you're serious. Commit and push.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post the finished piece you photographed yesterday. Caption: 'Tag a friend who needs this on their wall.' Cheesy? A little. Works? Yes — it gives people a concrete reason to share.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~4 min</span>
+          </div>
+          <div class="task-text">Post the piece + a direct ask: 'I'm trying to grow my art account — if this resonates, a repost means a lot.' Direct asks work at small sizes because your followers want to help but need the nudge.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">Reply to every response you get today. Every single one.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">19</span>
+        <span class="day-label">Day 19</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Engage in an art community thread or 'drop your art' post. Goldmines for small accounts — everyone in the thread is actively looking at and following new artists.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Stories: quick poll about your art preferences — 'warm palette vs cool palette?' or 'big canvas vs small?' Polls get taps, taps signal engagement.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~2 min</span>
+          </div>
+          <div class="task-text">2 comments on others' work.</div>
+        </div>
+      </div><div class="task p-prep">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR DAY 20 — set up a time-lapse or screen recording of your next work session. iPhone: Camera app → Time-Lapse. Works best for 20–40 min sessions. Prop your phone so it has a stable, overhead or angled view of your work surface. Hit record, work normally, stop when done. You'll use this for the next Reel.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">20</span>
+        <span class="day-label">Day 20</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~15 min</span>
+          </div>
+          <div class="task-text">FIX #10 — FEATURED PIECE ON HOMEPAGE. Add one hero image to your homepage — your best current piece. Below it: <code>&lt;p&gt;'Title', [medium], [year] — &lt;a href="shop-link"&gt;Available&lt;/a&gt;&lt;/p&gt;</code> (or 'Sold' / 'Commission a similar piece'). This turns your homepage into a micro-gallery and gives buyers a reason to click deeper. Commit and push.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post a Reel using the time-lapse you filmed. Trim to under 30 seconds, add trending audio. The algorithm rewards Reels with reach to non-followers.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">Personality post — something funny or vulnerable about artist life, not art. 'My non-artist friends think I just sit around and vibe all day. Meanwhile I'm having a breakdown over a nose.'</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">21</span>
+        <span class="day-label">Day 21</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~15 min</span>
+          </div>
+          <div class="task-text">Week 3 review: compare follower counts to Day 7. Check GoatCounter — how many visitors this week? Which posts drove traffic? Which interactions led to follows? Engage: 5 comments.</div>
+        </div>
+      </div></div></div></div><div class="week" id="week-3"><button class="week-header">
+    <div>
+      <div class="week-title">WEEK 4 — CONSOLIDATE &amp; SYSTEMIZE</div>
+      <div class="week-subtitle">Lock in your rhythm. Email list. Final site polish.</div>
+    </div>
+    <div class="week-count" id="week-count-3">0/26 ✓</div>
+  </button><div class="week-body"><div class="day">
+      <div class="day-head">
+        <span class="day-num">22</span>
+        <span class="day-label">Day 22</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">FIX #11 — EMAIL LIST SIGNUP. Go to kit.com (formerly ConvertKit) — free account, create a simple form, grab their embed code (script tag + form element). Paste it into your About page or homepage. Even one field ('Get updates when new work drops → email') is enough. Email is the only channel you own — no algorithm, no platform dependency. Long-game collector tool. Commit and push.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post your strongest content format. In the caption, mention your shop naturally: 'this one's available — link in bio.'</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~4 min</span>
+          </div>
+          <div class="task-text">Cross-post with a scroll-stopping first line — bold statement, a number, or a question. First line is everything on X.</div>
+        </div>
+      </div><div class="task p-prep">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR DAY 24 — gather your materials for a reflection carousel: screenshot your follower count on both platforms right now, pull up your 3 best-performing posts from the month (you can see these in IG Insights and X Analytics), and jot down 3–4 things you've learned this month. You'll turn this into a '30 days of posting' carousel/thread. Saves time if the assets are ready.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">23</span>
+        <span class="day-label">Day 23</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Contribute to a conversation outside your niche — gaming, design, film, writing. Your art perspective is interesting to people outside the art bubble. This is how you find non-artist followers who become collectors.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~7 min</span>
+          </div>
+          <div class="task-text">Engage: 5 comments on Explore in adjacent niches — interior design, fashion, architecture. Wherever your art could fit into someone's life.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">24</span>
+        <span class="day-label">Day 24</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~15 min</span>
+          </div>
+          <div class="task-text">FIX #12 — NAVIGATION + PAGE TITLES AUDIT. Click every nav link — none should be broken. You should have: Home, Gallery, About, Commissions, Shop (external). Check every HTML file has <code>&lt;title&gt;Page Name — Your Name&lt;/title&gt;</code>. Matters for Google and bookmarking. Commit and push.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post the reflection carousel you prepped on Day 22 — 'What 30 days of posting taught me' with your stats screenshots and key lessons. Personal + useful = high saves.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Thread version. Be honest about your numbers — vulnerability resonates. 'I started this with 33 followers. Here's what I learned.'</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~2 min</span>
+          </div>
+          <div class="task-text">Reply to all responses.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">25</span>
+        <span class="day-label">Day 25</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~15 min</span>
+          </div>
+          <div class="task-text">Engagement blitz #2: all time on comments and replies. Focus on people who've engaged with you before — deepen those connections. These are your proto-community. Some of them will become buyers.</div>
+        </div>
+      </div><div class="task p-prep">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR DAY 26 — set up another time-lapse while working. Same drill: phone on a stand, Camera app → Time-Lapse, 20–40 min session. Alternatively, film a short 15–30 second clip of yourself adding detail to a piece — close-up of hands, brush/pen moving. You'll use this for the next Reel.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">26</span>
+        <span class="day-label">Day 26</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~15 min</span>
+          </div>
+          <div class="task-text">FIX #13 — FOOTER ON EVERY PAGE. Open each HTML file — index, gallery, about, commissions. Add or update a <code>&lt;footer&gt;</code> with: your email (linked), IG link, X link, shop link. A footer on every page means a collector is never more than one scroll away from how to reach you. Commit and push.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post a Reel using the time-lapse or footage you filmed. New audio or format you haven't tried. Algorithm rewards experimentation.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~4 min</span>
+          </div>
+          <div class="task-text">Post something that invites replies — a question, fill-in-the-blank, or 'wrong answers only' about art.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">27</span>
+        <span class="day-label">Day 27</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Post your strongest piece of the month. Go all-in on caption and hashtags. Pin this post — it's the first thing new visitors see.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~4 min</span>
+          </div>
+          <div class="task-text">Pin your best tweet from the month. Add a line about commissions or availability.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">3 comments.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">28</span>
+        <span class="day-label">Day 28</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~15 min</span>
+          </div>
+          <div class="task-text">FIX #14 — UPDATE GALLERY WITH MONTH'S BEST WORK. Add your 2–3 best new pieces from this month. Remove anything you deprioritised in Week 1. Run new images through squoosh.app before committing. Each image should have title, medium, size, availability status. Commit and push.</div>
+        </div>
+      </div><div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~8 min</span>
+          </div>
+          <div class="task-text">Engage: 5 comments on new accounts.</div>
+        </div>
+      </div><div class="task p-prep">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">📷 PREP</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">📷 PREP FOR DAY 29 — find something you're currently in the middle of making, or start something small. Take a photo of the very early in-progress state tonight. You'll post this to Stories with a 'guess what this becomes' question sticker. Works best if it's ambiguous-looking — early sketches, blocked-in shapes, underpainting.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">29</span>
+        <span class="day-label">Day 29</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~20 min</span>
+          </div>
+          <div class="task-text">FINAL SITE REVIEW. Go through every page as a first-time collector. Does the homepage instantly say what you make? Gallery reachable in one click? About warm and human? Clear buy/inquire path on every page? Email signup visible? Every external link opens correctly? Fix anything still half-done. Commit and push.</div>
+        </div>
+      </div><div class="task p-insta">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">IG</span>
+            <span class="task-time">~5 min</span>
+          </div>
+          <div class="task-text">Stories: post the early WIP you photographed last night. Question sticker: 'Guess what this becomes.' Keeps people curious and coming back.</div>
+        </div>
+      </div><div class="task p-x">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">𝕏</span>
+            <span class="task-time">~3 min</span>
+          </div>
+          <div class="task-text">Ask directly: 'If you were going to commission a piece from me, what would you want?' Surfaces buyer intent and gives you real data on what people want.</div>
+        </div>
+      </div></div><div class="day">
+      <div class="day-head">
+        <span class="day-num">30</span>
+        <span class="day-label">Day 30</span>
+      <span class="day-stamp"></span></div>
+    <div class="task p-both">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">BOTH</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">MONTH REVIEW: Compare follower counts to Day 1. List top 3 posts by engagement on each platform. Write your repeatable weekly template — which days you post, which you engage, which formats work. You now have a system.</div>
+        </div>
+      </div><div class="task p-web">
+        <input type="checkbox">
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">SITE</span>
+            <span class="task-time">~10 min</span>
+          </div>
+          <div class="task-text">SITE FINAL CHECK: Open GoatCounter — total visitors this month, top pages, which social platform sent most traffic, any commission inquiries. The infrastructure is now complete: GitHub Pages site on your own domain, curated collector-ready gallery, About page, commission page, shop, email signup, analytics, optimised images, footer on every page. Your job from here: feed it consistently and update the gallery monthly.</div>
+        </div>
+      </div></div></div></div></div>
+
+  <div class="principles">
+    <div class="principles-title">GUIDING PRINCIPLES</div>
+    <p><strong>Post 4–5×/week on each platform.</strong> Consistency beats perfection. A rough sketch posted beats a masterpiece hoarded.</p>
+    <p><strong>Engage daily, even on rest days.</strong> Comments on others' work are your #1 growth lever at this size. Aim for 3–5 genuine interactions per day.</p>
+    <p><strong>Engage UP and SIDEWAYS.</strong> Comment on accounts slightly bigger than yours (500–5K) and accounts your size. Big accounts rarely notice; peers become allies.</p>
+    <p><strong>Reels are your discovery engine on IG.</strong> The algorithm pushes Reels to non-followers. Post at least 1/week.</p>
+    <p><strong>On X, personality wins.</strong> Art + opinions + humor + vulnerability. Pure art accounts grow slow on X — being a person who makes art grows faster.</p>
+    <p><strong>Pinterest is your silent salesperson.</strong> Unlike IG and X, Pinterest is a search engine — pins you create today drive traffic for months. Pin every new piece, write keyword descriptions that speak to collectors and interior designers, and let it compound in the background while you focus on community-building elsewhere.</p>
+    <p><strong>📷 PREP tasks come the night before.</strong> Any post that needs footage or staged shots has an amber reminder the day before. Do it while you're already working — takes 2 minutes to set up a phone on a stand.</p>
+    <p><strong>Your site is your home base.</strong> Green tasks build it one step at a time — none take more than 20 min. By end of month it's a real collector-ready destination.</p>
+    <p><strong>Think like a collector magnet.</strong> Mix "I'm talented" posts (finished work) with "I'm a real person" posts (process, opinions, life). Collectors buy from people they feel connected to.</p>
+  </div>
+
+</div>
+
+<script>
+const PRE_CHECKED = {
+  "0-1-0": true, "0-1-1": true, "0-1-2": true, "0-1-3": true,
+  "0-2-0": true, "0-2-1": true, "0-2-2": true,
+  "0-3-0": true, "0-3-1": true,
+  "0-4-0": true,
+  "0-4-1": true,
+  "0-4-2": true,
+};
+
+// Pre-checked days get a placeholder stamp date (May 7–10 as originally done)
+const PRE_STAMPS = {
+  "0-1": "May 7",
+  "0-2": "May 8",
+  "0-3": "May 9",
+  "0-4": "May 10",
+};
+
+const WEEKS = [
+  {
+    title: "WEEK 1 — LAY THE GROUND",
+    subtitle: "Profiles, first posts, get the site live",
+    days: [
+      { day: 1, tasks: [
+        { p: "both", action: "Set up a Linktree with 3 placeholder links: Portfolio (your site), Commissions (Google Form), Shop (placeholder). Add to both bios.", time: 8 },
+        { p: "both", action: "Audit your bios on IG and X — consistent profile pics, handles, identity line.", time: 5 },
+        { p: "insta", action: "Build 3 hashtag sets (10–15 tags each): medium, style, community. Save in notes for quick pasting.", time: 5 },
+        { p: "x", action: "Follow 10 artists you admire. Turn on notifications for 3 — early replies to their posts get seen by their whole audience.", time: 5 },
+      ]},
+      { day: 2, tasks: [
+        { p: "insta", action: "Post a finished piece — your best recent work. Hashtag set #1. Caption about your process: what inspired it, what was hard, what surprised you.", time: 8 },
+        { p: "x", action: "Post the same piece with a short personal thought — not just 'new work' but something like 'This one fought me for 3 days. Finally figured out the light.'", time: 3 },
+        { p: "both", action: "Reply genuinely to 3 other artists' posts. Say something specific about their work, not just emojis.", time: 4 },
+      ]},
+      { day: 3, tasks: [
+        { p: "x", action: "Quote-retweet or reply to a post by a bigger artist (500–5K followers) with a genuine take. Their audience sees you.", time: 5 },
+        { p: "both", action: "Engage: leave 5 meaningful comments across both platforms on posts in your niche. Target 500–5K accounts.", time: 10 },
+      ]},
+      { day: 4, tasks: [
+        { p: "web", action: "SITE AUDIT — open your repo on GitHub, then your live preview or local version in a browser. Answer these 3 questions in a notes doc: (1) Within 5 seconds, can a stranger tell what kind of art you make? (2) Is there one clear thing to click to buy or inquire? (3) Does anything look broken on mobile? (DevTools → Toggle device toolbar → iPhone 12 Pro.) Write down every 'no' — these are your fix list. 10 minutes max, no fixing yet.", time: 10 },
+        { p: "insta", action: "Post a Story showing a WIP — sketch, desk, tools. Poll sticker: 'Which direction should I take this?' Stories build intimacy and keep you in the stories tray.", time: 5 },
+        { p: "x", action: "Share a WIP photo with a hot take. 'Hot take: the ugly middle stage of a painting is the most important part.'", time: 5 },
+        { p: "prep", action: "📷 PREP FOR NEXT DAY — photograph 'Dialogues. Part V: blue' for posting. You want one clean, well-lit shot of the full piece. Natural light near a window works best — avoid harsh overhead or flash. Shoot portrait orientation (it's A4). Take 3–4 variants (slightly different angles/crops) and pick the sharpest one. No staging needed, just the painting. You'll post this tomorrow as a single image.", time: 5 },
+      ]},
+      { day: 5, tasks: [
+        { p: "web", action: "DEPLOY TO GITHUB PAGES + POINT YOUR DOMAIN. Two steps: (1) In your repo on GitHub, go to Settings → Pages → set Source to 'Deploy from a branch', pick main (or master), folder / (root). Hit Save. GitHub gives you a yourname.github.io URL — click it to confirm it loads. (2) Point your domain: go to your registrar (Namecheap, Porkbun, etc.), find DNS settings. Add 4 A records pointing to: 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153. Add a CNAME record: www → yourusername.github.io. Back in GitHub Pages settings, enter your custom domain and check 'Enforce HTTPS'. In your repo root, create a file called <code>CNAME</code> (no extension) containing just your domain, e.g. <code>yourname.com</code>. DNS takes up to 24h to propagate — the .github.io URL works immediately. Update your Linktree and both bios with your domain.", time: 20 },
+        { p: "insta", action: "Post 'Dialogues. Part V: blue' as a single finished piece. No process shots needed — the painting carries itself. Use this caption as a starting point:<br><br><em>There's a door in Lisbon I keep thinking about.<br><br>Praça José Fontana — late afternoon, the kind of light that makes a building look like it's exhaling. The red door, the arched window, a tree pulling everything slightly sideways. I painted it in watercolour and finished it digitally. I wasn't trying to document it. I was trying to hold the feeling of standing there.<br><br>This is part of an ongoing series called Dialogues — conversations between places and the light that makes them briefly strange.<br><br>Part VI is already in my head.</em><br><br>End with 3–5 hashtags from your saved sets: architecture ones (#urbanwatercolor #architectureart #lisbonart) plus your style tags. The series name 'Dialogues' in the caption seeds curiosity about future parts — that's a follow hook.", time: 10 },
+        { p: "x", action: "Post the painting with a shorter, punchier version. Try: <em>'Painted a door in Lisbon that I haven't been able to stop thinking about. Watercolour + digital. Part V of an ongoing series called Dialogues.'</em> — then add one more line with a genuine thought, e.g. <em>'Something about late afternoon light in southern Europe makes ordinary buildings look like they're about to say something.'</em> The series mention does the same work as on IG — it signals there's more coming and gives people a reason to follow.", time: 5 },
+      ]},
+      { day: 6, tasks: [
+        { p: "web", action: "CONFIRM DEPLOY. Check your custom domain is live (may have propagated overnight). Open yourname.com — does it load? Does it show HTTPS? If not yet, give it more hours. While waiting: open index.html and make sure your <code>&lt;title&gt;</code> tag says 'Your Name — Artist', not 'index' or blank. Commit and push if you changed anything.", time: 10 },
+        { p: "both", action: "Set up your commission inquiry form (Google Forms — free). Fields: name, what they want, size/medium preference, budget range, timeline. Update your Linktree commissions link to point here.", time: 10 },
+        { p: "x", action: "Jump into a trending art conversation or art hashtag. Reply to 5 people with genuine takes — not self-promo, just be interesting.", time: 8 },
+        { p: "pin", action: "PINTEREST SETUP — Create a Pinterest business account (free at pinterest.com/business/create). Use your real name + 'Artist' in the username. Write a bio that includes your medium and style: 'Watercolour + digital artist. Paintings about place, light, and memory.' Add your website URL. Create 3 boards to start: '[Your Name] — Original Work', 'Art Inspiration', and '[Your Style] Interiors' (e.g. 'Watercolour Interiors'). Pin your 3–5 best existing pieces to your Original Work board. Pinterest is a long-game search engine — content you pin today drives traffic for months.", time: 15 },
+        { p: "prep", action: "📷 PREP FOR DAY 8 — take 3–5 photos of your creative routine: your desk set up, hands on paper/canvas/tablet, your tools laid out, a cup of tea/coffee next to a sketchbook. Natural light works best. These are for a 'day in the life' Stories post. No staging needed — just document what's real.", time: 5 },
+      ]},
+      { day: 7, tasks: [
+        { p: "web", action: "FIX #1 — META TAGS. Open your index.html <code>&lt;head&gt;</code>. Add if missing: <code>&lt;meta name=\"description\" content=\"[Your name] — [medium] artist. [1 sentence about your work].\"&gt;</code> and <code>&lt;meta property=\"og:image\" content=\"https://yourdomain.com/img/featured.jpg\"&gt;</code>. The og:image is what shows when someone shares your link on IG or X — a good preview meaningfully increases clicks. Use the full URL to one of your best pieces. Commit and push.", time: 15 },
+        { p: "pin", action: "Add 'Dialogues. Part V: blue' to your Original Work board. Write a keyword-rich description (not a caption — think search terms): 'Lisbon watercolour painting. Red door architecture, European street scene, watercolour and digital mixed media. Original art available.' Pinterest descriptions are indexed by Google — include the subject, style, medium, and mood. Always link directly to your site or shop page, not just your homepage. Save 5–10 pins from other artists into your Inspiration board to build board authority.", time: 10 },
+        { p: "both", action: "REST from posting. Engage only: 5 comments across platforms. Screenshot follower counts — this is your Week 1 baseline.", time: 10 },
+      ]},
+    ],
+  },
+  {
+    title: "WEEK 2 — FIND YOUR VOICE",
+    subtitle: "Experiment with formats. Fix site structure. Build your shop.",
+    days: [
+      { day: 8, tasks: [
+        { p: "web", action: "FIX #2 — HOMEPAGE HEADLINE + ABOUT SNIPPET. Open index.html. (1) Find your main <code>&lt;h1&gt;</code> — update it to your name + what you make, e.g. 'Jane Doe — Watercolour &amp; Ink'. Add a subtitle: <code>&lt;p class=\"tagline\"&gt;Paintings about [subject/theme]&lt;/p&gt;</code>. (2) Add a short 2–3 sentence bio excerpt on the homepage with a 'Read more →' link to your about page. Collectors want to feel like they know you before they click deeper. Commit and push.", time: 15 },
+        { p: "insta", action: "Post a 'day in the life' Stories using the routine shots you prepped — 3–5 frames of your creative space and process. Question sticker: 'What should I draw next?' Interactive stickers boost story reach.", time: 7 },
+        { p: "x", action: "Post a standalone text tweet — a thought, joke, or observation about being an artist. 'Just realised I've been painting the same shade of blue for 6 months. Am I ok?' Show personality — this is how you build a following on X.", time: 3 },
+        { p: "pin", action: "Create a 'Studio Process' board. Pin 3–5 of your WIP or desk photos here with keyword descriptions. Example description: 'Watercolour artist studio setup. Loose watercolour painting in progress. Art process inspiration.' Also add a 'Art for Your Home' board — this targets the collector mindset directly. Pin pieces here with descriptions that include room context: 'Original watercolour painting for living room. European architecture art print. Blue and warm tones, A4 size.'", time: 8 },
+        { p: "both", action: "3 genuine replies to others.", time: 3 },
+        { p: "prep", action: "📷 PREP FOR DAY 11 — while working on a piece this week, photograph both ends: what you originally planned/sketched vs how it actually turned out. Even if the piece isn't done, grab a reference shot of your rough concept (a sketch, a reference image, a colour palette you tried) alongside where the piece is now. You'll use this for an 'Expectation vs Reality' carousel.", time: 5 },
+      ]},
+      { day: 9, tasks: [
+        { p: "web", action: "FIX #3 — ABOUT PAGE. Open about.html (or your about section). It needs: (1) A real photo of you. If you hate photos, hands-at-work or a studio shot counts. (2) Bio in first person: what you make, why, where you're based, one personal detail. 3–5 sentences. (3) Your email clickable: <code>&lt;a href=\"mailto:you@email.com\"&gt;you@email.com&lt;/a&gt;</code>. Commit and push.", time: 20 },
+        { p: "insta", action: "Post a finished piece with a longer personal caption — tell a story about why you made it. Longer captions increase time-on-post, which the algorithm reads as engagement.", time: 8 },
+        { p: "x", action: "Post the piece + an honest opinion about art/creativity. 'Unpopular opinion: buying prints is just as valid as buying originals.' Opinions get engagement because people can't resist weighing in.", time: 4 },
+        { p: "pin", action: "Pin the piece you posted today to your Original Work board AND your 'Art for Your Home' board. Yes, pin the same piece to both — Pinterest rewards multi-board pinning. Write a different description for each: the first focuses on the art itself ('Lisbon street scene, watercolour and digital…'), the second focuses on the buyer ('Original watercolour painting for apartment wall, warm European colours, A4 original available'). This doubles the search surface for one piece.", time: 5 },
+      ]},
+      { day: 10, tasks: [
+        { p: "web", action: "FIX #4 — GALLERY AUDIT. Go through every image on your gallery/portfolio page. Remove or hide anything that doesn't represent your best current work. Aim for 6–12 pieces you're proud of — 7 strong pieces beats 20 mixed ones. If it's just a folder dump, pick your best 8, rename them 01.jpg, 02.jpg… and update the HTML to only show those. Commit and push.", time: 20 },
+        { p: "x", action: "Ask your followers: 'What's a subject you never get tired of seeing drawn?' Open questions get replies and boost visibility.", time: 3 },
+        { p: "pin", action: "Pinterest keyword research: go to Pinterest and type your medium in the search bar — 'watercolour architecture', 'urban sketching', etc. Note the autocomplete suggestions — those are what people are actually searching. Now check that your pins and board names include those exact phrases. Update any board descriptions to include 2–3 of the top search terms. This is free SEO that compounds over time.", time: 8 },
+        { p: "both", action: "Engage: 5 comments on 500–5K accounts across both platforms.", time: 10 },
+      ]},
+      { day: 11, tasks: [
+        { p: "insta", action: "Post an 'Expectation vs Reality' carousel using the shots you prepped on Day 8 — what you originally planned vs what happened. Relatable art content gets shared. Carousels have the highest save rate of any IG format.", time: 8 },
+        { p: "x", action: "Same concept as a single image + self-deprecating caption. Humor + vulnerability = follows on X.", time: 4 },
+        { p: "pin", action: "Create a 'Before & After' or 'Art Process' Pin using the expectation vs reality images. On Pinterest, process content performs exceptionally well with interior designers, art teachers, and aspiring artists — all potential buyers or advocates. Use a 2-image format if possible (Pinterest's native collage option). Description: 'Watercolour painting process — from rough sketch to finished piece. Original artwork available.' Link to your site's gallery page.", time: 6 },
+        { p: "both", action: "3 replies to others.", time: 3 },
+        { p: "prep", action: "📷 PREP FOR DAY 13 — set up your phone on a stand or prop it up while you work. Record a time-lapse of yourself drawing for 15–20 minutes (iPhone: built-in time-lapse in Camera app; Android: similar). Alternatively, take a photo of a piece in a completely different state than it is now — a before/after. You'll use this for a Reel.", time: 5 },
+      ]},
+      { day: 12, tasks: [
+        { p: "web", action: "FIX #5 — MOBILE CHECK. Open Chrome DevTools (F12) → Toggle device toolbar → test on 'iPhone 12 Pro' (390px) AND 'iPad' (768px). Look for: text too small, images overflowing, buttons under 44px tall, horizontal scroll. Fastest fixes: add <code>img { max-width: 100%; height: auto; }</code> and <code>body { overflow-x: hidden; }</code> to your CSS if not already there. Fix the worst offenders. Commit and push.", time: 20 },
+        { p: "x", action: "Find an art challenge or prompt list. Participate with a quick sketch or take — challenges put you in front of people actively browsing that tag.", time: 8 },
+        { p: "pin", action: "Follow 10 Pinterest accounts in adjacent niches: interior designers, art educators, stationery/paper goods shops, travel bloggers. Repin 3–5 things from each that genuinely fit your aesthetic. On Pinterest, repinning quality content into your boards builds board authority and gets your boards into others' feeds. It's not about curating for its own sake — it signals to the algorithm that your boards are active, well-themed resources.", time: 8 },
+        { p: "insta", action: "Engage only: 5 comments in your hashtag communities. Work through the Recent tab on a hashtag, not just Following.", time: 7 },
+      ]},
+      { day: 13, tasks: [
+        { p: "insta", action: "Post a Reel using the time-lapse or before/after you filmed on Day 11 or 12. Add trending audio. Keep it under 30 seconds — shorter Reels get replayed, and replays count as views.", time: 8 },
+        { p: "x", action: "Hot take about art. 'Art school taught me a lot about art history and almost nothing about actually making a living as an artist.'", time: 3 },
+        { p: "pin", action: "Add your site's Pinterest save button: go to pinterest.com/businesstools and grab the 'Save' button widget. Paste the script before <code>&lt;/body&gt;</code> in your HTML. Now anyone visiting your gallery can pin your work directly from your site — these organic pins link back to you and drive traffic passively. Also add <code>&lt;meta name=\"pinterest-rich-pin\" content=\"true\"&gt;</code> to your HTML head so Pinterest automatically pulls your title and description when someone pins your work.", time: 10 },
+        { p: "both", action: "4 replies.", time: 4 },
+      ]},
+      { day: 14, tasks: [
+        { p: "web", action: "FIX #6 — COMMISSION PAGE. Create commissions.html (or add a section). Include: (1) 2–3 sentences about what kinds of commissions you take. (2) Your Google Form embedded or linked. (3) Rough price range — even 'starting at $X' filters out time-wasters. Add a 'Commissions' link to your <code>&lt;nav&gt;</code>. Update your Linktree commissions link to this page. Commit and push.", time: 20 },
+        { p: "pin", action: "Week 2 Pinterest review: check Pinterest Analytics (business.pinterest.com → Analytics → Overview). Look at which pins got the most impressions and saves. The top performer tells you what content resonates with Pinterest's audience, which skews toward collectors, interior designers, and people actively planning purchases. Double down on that content type. Also check your 'outbound clicks' — this is Pinterest traffic to your site. Even early on you may see a trickle.", time: 8 },
+        { p: "both", action: "Set up a simple shop: Big Cartel (free up to 5 products) or Ko-fi. List 1–3 pieces. Update Linktree shop link. Review the week — which post got most engagement? Write down your top 2 content types.", time: 20 },
+      ]},
+    ],
+  },
+  {
+    title: "WEEK 3 — DOUBLE DOWN",
+    subtitle: "Lean into what works. Polish & analytics. Expand your network.",
+    days: [
+      { day: 15, tasks: [
+        { p: "web", action: "FIX #7 — ADD ANALYTICS. Sign up free at goatcounter.com. They give you one script tag — paste it before <code>&lt;/body&gt;</code> in every HTML page (index, gallery, about, commissions at minimum). Commit and push. Within 24h you'll see page views, which pages people visit, and where they came from.", time: 10 },
+        { p: "insta", action: "Post your best content type from Week 2 — double down on what worked.", time: 8 },
+        { p: "x", action: "Cross-post + add a personal thought or behind-the-scenes detail you didn't share on IG.", time: 3 },
+        { p: "pin", action: "Create an 'Idea Pins' (Pinterest's video/Story format) — record a 15–30 second clip of yourself painting or sketching. Idea Pins don't link out, but they build your Pinterest follower base and get surface area in the feed. Show one small detail: mixing a colour, adding a wash, pen detail work. Add text overlay: your name + 'watercolour artist'. Unlike regular pins, Idea Pins are shown to new audiences proactively by Pinterest.", time: 8 },
+        { p: "both", action: "Engage: 5 comments on NEW accounts you haven't interacted with before.", time: 4 },
+        { p: "prep", action: "📷 PREP FOR DAY 16 — share someone else's art you genuinely love. Find the post on IG or X now and screenshot it, or save the URL. Have the artist's handle ready. Tomorrow you'll share it to Stories on IG and tag them — this takes 30 seconds if you've already found the piece. Also think of one genuine thing to say about why you love it.", time: 3 },
+      ]},
+      { day: 16, tasks: [
+        { p: "web", action: "FIX #8 — IMAGE OPTIMIZATION. In your repo, find any image files over 500KB. Go to squoosh.app (free, browser-based) — drag each oversized image in, convert to WebP at ~80% quality, download, replace the old file. Also add <code>loading=\"lazy\"</code> to every <code>&lt;img&gt;</code> tag that isn't your hero image. Faster gallery = better collector experience. Commit and push.", time: 20 },
+        { p: "x", action: "Mini-thread: 'Things I've learned from drawing every day.' Genuine insights. Threads get bookmarked and have longer shelf life than single tweets.", time: 8 },
+        { p: "pin", action: "Pin your 3 best pieces again — yes, repinning your own work to the same boards is fine and recommended on Pinterest. The algorithm doesn't penalise it. Spread it out over the day or pin at different times. Add slight variations to the description each time (different keywords). Pinterest is a volume game: frequent, consistent pinning beats sporadic bulk sessions.", time: 5 },
+        { p: "insta", action: "Stories: share the art you found yesterday and tag the artist. Say why you love it in 1–2 sentences. They'll often reshare to their audience.", time: 3 },
+      ]},
+      { day: 17, tasks: [
+        { p: "both", action: "Engagement blitz: spend all 15 min leaving thoughtful comments on 10 posts across both platforms. Today is pure surface-area expansion — no posting, just showing up in other people's comment sections.", time: 15 },
+        { p: "pin", action: "Create a 'Colour Studies' or 'Sketches' board and add your looser, sketchier work here — pieces that might feel too informal for your main gallery. Pinterest collectors love seeing an artist's range. A scrappy sketch board humanises you, and some buyers specifically seek out sketches and studies. Label each with 'Original sketch — available' or 'Study for [larger piece]' to signal there's a purchase path.", time: 8 },
+        { p: "prep", action: "📷 PREP FOR DAY 18 — while working today, photograph your current piece against a clean background (floor, wall, desk). You'll post it next with a 'tag a friend' caption. Also, look at your photo library and pick your second-strongest finished piece from this month — you may need it as a backup if current work isn't ready.", time: 5 },
+      ]},
+      { day: 18, tasks: [
+        { p: "web", action: "FIX #9 — COLLECTOR-READY GALLERY CAPTIONS. Go through your gallery HTML. For each piece add: (1) Title. (2) Medium and size. (3) Status: Available / Sold / Commission similar. (4) Price or 'DM to inquire'. Even a simple caption under each image works. Signals you're serious. Commit and push.", time: 20 },
+        { p: "insta", action: "Post the finished piece you photographed yesterday. Caption: 'Tag a friend who needs this on their wall.' Cheesy? A little. Works? Yes — it gives people a concrete reason to share.", time: 8 },
+        { p: "x", action: "Post the piece + a direct ask: 'I'm trying to grow my art account — if this resonates, a repost means a lot.' Direct asks work at small sizes because your followers want to help but need the nudge.", time: 4 },
+        { p: "pin", action: "Pin the piece to your 'Art for Your Home' board with a room-placement description: 'Original watercolour available — painted in Lisbon, warm afternoon light, A4 size. Would work beautifully above a reading chair or in an entryway.' Pinterest users are frequently in home-decoration mode — speaking their language (room placement, mood, size) converts browsers into buyers far better than purely art-speak descriptions.", time: 5 },
+        { p: "both", action: "Reply to every response you get today. Every single one.", time: 3 },
+      ]},
+      { day: 19, tasks: [
+        { p: "x", action: "Engage in an art community thread or 'drop your art' post. Goldmines for small accounts — everyone in the thread is actively looking at and following new artists.", time: 8 },
+        { p: "insta", action: "Stories: quick poll about your art preferences — 'warm palette vs cool palette?' or 'big canvas vs small?' Polls get taps, taps signal engagement.", time: 5 },
+        { p: "pin", action: "Audit your Pinterest boards: every board should have at least 20 pins (yours + curated) and a clear keyword-rich description. Thin boards with 3–4 pins look abandoned. Fill any gaps by pinning other artists' work you admire into your Inspiration board, and pinning your older pieces you haven't added yet. Aim for each board to feel like a focused, useful resource — not a random grab-bag.", time: 8 },
+        { p: "both", action: "2 comments on others' work.", time: 2 },
+        { p: "prep", action: "📷 PREP FOR DAY 20 — set up a time-lapse or screen recording of your next work session. iPhone: Camera app → Time-Lapse. Works best for 20–40 min sessions. Prop your phone so it has a stable, overhead or angled view of your work surface. Hit record, work normally, stop when done. You'll use this for the next Reel.", time: 5 },
+      ]},
+      { day: 20, tasks: [
+        { p: "web", action: "FIX #10 — FEATURED PIECE ON HOMEPAGE. Add one hero image to your homepage — your best current piece. Below it: <code>&lt;p&gt;'Title', [medium], [year] — &lt;a href=\"shop-link\"&gt;Available&lt;/a&gt;&lt;/p&gt;</code> (or 'Sold' / 'Commission a similar piece'). This turns your homepage into a micro-gallery and gives buyers a reason to click deeper. Commit and push.", time: 15 },
+        { p: "insta", action: "Post a Reel using the time-lapse you filmed. Trim to under 30 seconds, add trending audio. The algorithm rewards Reels with reach to non-followers.", time: 8 },
+        { p: "x", action: "Personality post — something funny or vulnerable about artist life, not art. 'My non-artist friends think I just sit around and vibe all day. Meanwhile I'm having a breakdown over a nose.'", time: 3 },
+        { p: "pin", action: "Pinterest is strongest with vertical images (2:3 ratio, e.g. 1000×1500px). If your pieces are portrait format you're already set. If landscape, create a vertical 'pin template' in Canva (free): place your painting in the top two-thirds, add your name and website URL in a simple text strip at the bottom. This makes your pins more prominent in the feed AND brands every pin with your site URL even when repinned. Save the template — you'll reuse it for every new pin.", time: 10 },
+      ]},
+      { day: 21, tasks: [
+        { p: "both", action: "Week 3 review: compare follower counts to Day 7. Check GoatCounter — how many visitors this week? Which posts drove traffic? Which interactions led to follows? Engage: 5 comments.", time: 15 },
+        { p: "pin", action: "Check Pinterest Analytics → Traffic. Are any of your pins driving clicks to your site? Which boards are getting the most impressions? The top-performing board tells you what topic your Pinterest audience cares about most — lean into it next week. Even if numbers are tiny, you're establishing a baseline. Pinterest results compound over 3–6 months; the work you're doing now is infrastructure.", time: 5 },
+      ]},
+    ],
+  },
+  {
+    title: "WEEK 4 — CONSOLIDATE & SYSTEMIZE",
+    subtitle: "Lock in your rhythm. Email list. Final site polish.",
+    days: [
+      { day: 22, tasks: [
+        { p: "web", action: "FIX #11 — EMAIL LIST SIGNUP. Go to kit.com (formerly ConvertKit) — free account, create a simple form, grab their embed code (script tag + form element). Paste it into your About page or homepage. Even one field ('Get updates when new work drops → email') is enough. Email is the only channel you own — no algorithm, no platform dependency. Long-game collector tool. Commit and push.", time: 20 },
+        { p: "insta", action: "Post your strongest content format. In the caption, mention your shop naturally: 'this one's available — link in bio.'", time: 8 },
+        { p: "x", action: "Cross-post with a scroll-stopping first line — bold statement, a number, or a question. First line is everything on X.", time: 4 },
+        { p: "pin", action: "Add your Pinterest profile link to your site footer and Linktree. Pinterest is the one platform where linking to it actively helps you — unlike IG or X which keep people on-platform, Pinterest is designed to send people to external sites. Having your profile linked means collectors who find your work on Pinterest can click straight through to your shop. Also claim your website in Pinterest Settings → Claim — this puts your profile photo on every pin that links to your domain.", time: 8 },
+        { p: "prep", action: "📷 PREP FOR DAY 24 — gather your materials for a reflection carousel: screenshot your follower count on both platforms right now, pull up your 3 best-performing posts from the month (you can see these in IG Insights and X Analytics), and jot down 3–4 things you've learned this month. You'll turn this into a '30 days of posting' carousel/thread. Saves time if the assets are ready.", time: 8 },
+      ]},
+      { day: 23, tasks: [
+        { p: "x", action: "Contribute to a conversation outside your niche — gaming, design, film, writing. Your art perspective is interesting to people outside the art bubble. This is how you find non-artist followers who become collectors.", time: 8 },
+        { p: "insta", action: "Engage: 5 comments on Explore in adjacent niches — interior design, fashion, architecture. Wherever your art could fit into someone's life.", time: 7 },
+        { p: "pin", action: "Find 3–5 interior design accounts on Pinterest and follow them. Look at their boards for colour moods and aesthetics that overlap with your work — neutral minimalism, warm maximalism, Mediterranean, Japandi, etc. Save their boards that fit your work's mood. This puts your account in front of their followers and positions your art in a purchase context. When someone is pinning 'warm Mediterranean living room ideas' and your Lisbon painting appears, that's a collector discovering you.", time: 8 },
+      ]},
+      { day: 24, tasks: [
+        { p: "web", action: "FIX #12 — NAVIGATION + PAGE TITLES AUDIT. Click every nav link — none should be broken. You should have: Home, Gallery, About, Commissions, Shop (external). Check every HTML file has <code>&lt;title&gt;Page Name — Your Name&lt;/title&gt;</code>. Matters for Google and bookmarking. Commit and push.", time: 15 },
+        { p: "insta", action: "Post the reflection carousel you prepped on Day 22 — 'What 30 days of posting taught me' with your stats screenshots and key lessons. Personal + useful = high saves.", time: 8 },
+        { p: "x", action: "Thread version. Be honest about your numbers — vulnerability resonates. 'I started this with 33 followers. Here's what I learned.'", time: 5 },
+        { p: "pin", action: "Create a 'Behind the Series' board specifically for your Dialogues series. Add every Dialogues piece you've posted so far, plus any sketches or reference shots. Give each pin a description that references the series: 'Dialogues. Part V — Lisbon, watercolour and digital. Ongoing series exploring place and light.' Series boards on Pinterest perform well because they give people a reason to keep scrolling and following — they want to see what's next.", time: 8 },
+        { p: "both", action: "Reply to all responses.", time: 2 },
+      ]},
+      { day: 25, tasks: [
+        { p: "both", action: "Engagement blitz #2: all time on comments and replies. Focus on people who've engaged with you before — deepen those connections. These are your proto-community. Some of them will become buyers.", time: 15 },
+        { p: "pin", action: "Pinterest group boards: search for 'watercolour art' or 'original art for sale' group boards (look for the group icon — multiple profile photos). Request to join 2–3 active ones. Group boards expose your pins to the board's entire follower base, not just yours — it's like being featured to someone else's audience for free. Check the board's rules (usually in the description) before requesting.", time: 8 },
+        { p: "prep", action: "📷 PREP FOR DAY 26 — set up another time-lapse while working. Same drill: phone on a stand, Camera app → Time-Lapse, 20–40 min session. Alternatively, film a short 15–30 second clip of yourself adding detail to a piece — close-up of hands, brush/pen moving. You'll use this for the next Reel.", time: 5 },
+      ]},
+      { day: 26, tasks: [
+        { p: "web", action: "FIX #13 — FOOTER ON EVERY PAGE. Open each HTML file — index, gallery, about, commissions. Add or update a <code>&lt;footer&gt;</code> with: your email (linked), IG link, X link, shop link. A footer on every page means a collector is never more than one scroll away from how to reach you. Commit and push.", time: 15 },
+        { p: "insta", action: "Post a Reel using the time-lapse or footage you filmed. New audio or format you haven't tried. Algorithm rewards experimentation.", time: 8 },
+        { p: "x", action: "Post something that invites replies — a question, fill-in-the-blank, or 'wrong answers only' about art.", time: 4 },
+        { p: "pin", action: "Add Pinterest to your site footer (alongside IG and X link you added today). Use the official Pinterest logo SVG or a simple text link. Also: go back through your most-pinned pieces in Analytics and make sure every one links to the correct page on your site — not just the homepage, but the specific gallery page or shop listing if possible. Deep links convert much better than homepage links.", time: 5 },
+      ]},
+      { day: 27, tasks: [
+        { p: "insta", action: "Post your strongest piece of the month. Go all-in on caption and hashtags. Pin this post — it's the first thing new visitors see.", time: 8 },
+        { p: "x", action: "Pin your best tweet from the month. Add a line about commissions or availability.", time: 4 },
+        { p: "pin", action: "Create a seasonal or thematic board if relevant: 'Paintings of Portugal', 'Urban Sketching Europe', or 'Blue &amp; White Art' — something that a collector searching by mood or location would stumble into. Populate it with your own relevant work plus curated pins from other artists. Niche, specific boards tend to rank better in Pinterest search than generic 'art' boards. Think about what someone would search right before deciding they want to buy a painting for their home.", time: 8 },
+        { p: "both", action: "3 comments.", time: 3 },
+      ]},
+      { day: 28, tasks: [
+        { p: "web", action: "FIX #14 — UPDATE GALLERY WITH MONTH'S BEST WORK. Add your 2–3 best new pieces from this month. Remove anything you deprioritised in Week 1. Run new images through squoosh.app before committing. Each image should have title, medium, size, availability status. Commit and push.", time: 15 },
+        { p: "pin", action: "Pin every new piece you just added to the site — each to 2 boards (Original Work + the most relevant thematic board). Write fresh, keyword-rich descriptions for each. Your site and Pinterest should stay in sync: every new gallery addition gets a fresh pin within 24h. Build this as a standing habit, not a catch-up task.", time: 8 },
+        { p: "both", action: "Engage: 5 comments on new accounts.", time: 8 },
+        { p: "prep", action: "📷 PREP FOR DAY 29 — find something you're currently in the middle of making, or start something small. Take a photo of the very early in-progress state tonight. You'll post this to Stories with a 'guess what this becomes' question sticker. Works best if it's ambiguous-looking — early sketches, blocked-in shapes, underpainting.", time: 3 },
+      ]},
+      { day: 29, tasks: [
+        { p: "web", action: "FINAL SITE REVIEW. Go through every page as a first-time collector. Does the homepage instantly say what you make? Gallery reachable in one click? About warm and human? Clear buy/inquire path on every page? Email signup visible? Every external link opens correctly? Fix anything still half-done. Commit and push.", time: 20 },
+        { p: "insta", action: "Stories: post the early WIP you photographed last night. Question sticker: 'Guess what this becomes.' Keeps people curious and coming back.", time: 5 },
+        { p: "x", action: "Ask directly: 'If you were going to commission a piece from me, what would you want?' Surfaces buyer intent and gives you real data on what people want.", time: 3 },
+        { p: "pin", action: "Final Pinterest audit: (1) Profile complete? Photo, bio, website claimed? (2) At least 5 boards with 15+ pins each? (3) Every board has a keyword description? (4) Your best 10 pieces are pinned with collector-focused descriptions? (5) Pinterest Save button on your site? If any of these are missing, do them now. This is the infrastructure that drives passive traffic for months after the plan ends.", time: 10 },
+      ]},
+      { day: 30, tasks: [
+        { p: "both", action: "MONTH REVIEW: Compare follower counts to Day 1. List top 3 posts by engagement on each platform. Write your repeatable weekly template — which days you post, which you engage, which formats work. You now have a system.", time: 10 },
+        { p: "web", action: "SITE FINAL CHECK: Open GoatCounter — total visitors this month, top pages, which social platform sent most traffic, any commission inquiries. The infrastructure is now complete: GitHub Pages site on your own domain, curated collector-ready gallery, About page, commission page, shop, email signup, analytics, optimised images, footer on every page. Your job from here: feed it consistently and update the gallery monthly.", time: 10 },
+        { p: "pin", action: "Pinterest month review: check Analytics → Overview. Note your total impressions, saves, and outbound clicks. Pinterest results are small in month 1 but compound fast — accounts that stay consistent typically see 3–5x traffic growth by month 3. Your standing weekly Pinterest habit: pin every new finished piece on posting day, repin 3–5 curated pieces on off-days, check analytics once a week. It's 5 minutes a day for a traffic channel that works while you sleep.", time: 8 },
+      ]},
+    ],
+  },
+];
+
+const platformMeta = {
+  insta: { label: "IG",        cls: "p-insta" },
+  x:     { label: "𝕏",        cls: "p-x" },
+  both:  { label: "BOTH",      cls: "p-both" },
+  web:   { label: "SITE",      cls: "p-web" },
+  prep:  { label: "📷 PREP",   cls: "p-prep" },
+  pin:   { label: "PIN",       cls: "p-pin" },
+};
+
+const STORAGE_KEY   = "growth-plan-checked-v5";
+const STAMPS_KEY    = "growth-plan-stamps-v2";
+
+let checkedState = {};
+let stampState   = {};  // key: "wi-day" → "Mon May 10"
+
+function fmtDate(d) {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "short" });
+}
+
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  checkedState = saved ? JSON.parse(saved) : Object.assign({}, PRE_CHECKED);
+  if (!saved) localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedState));
+} catch(e) { checkedState = Object.assign({}, PRE_CHECKED); }
+
+try {
+  const savedStamps = localStorage.getItem(STAMPS_KEY);
+  stampState = savedStamps ? JSON.parse(savedStamps) : Object.assign({}, PRE_STAMPS);
+  if (!savedStamps) localStorage.setItem(STAMPS_KEY, JSON.stringify(stampState));
+} catch(e) { stampState = Object.assign({}, PRE_STAMPS); }
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(checkedState)); } catch(e) {}
+  try { localStorage.setItem(STAMPS_KEY, JSON.stringify(stampState)); } catch(e) {}
+}
+
+function isDayComplete(wi, day, tasks) {
+  return tasks.every((_, ti) => !!checkedState[`${wi}-${day}-${ti}`]);
+}
+
+function updateStampEl(dayKey, stampEl) {
+  const stamp = stampState[dayKey];
+  if (stamp) {
+    stampEl.textContent = "✓ " + stamp;
+    stampEl.classList.add("stamped");
+  } else {
+    stampEl.textContent = "";
+    stampEl.classList.remove("stamped");
+  }
+}
+
+let totalTasks = 0;
+WEEKS.forEach(w => w.days.forEach(d => totalTasks += d.tasks.length));
+
+function updateProgress() {
+  const done = Object.values(checkedState).filter(Boolean).length;
+  const pct  = Math.round((done / totalTasks) * 100);
+  document.getElementById("progress-text").textContent = `${done} of ${totalTasks} tasks done`;
+  document.getElementById("progress-pct").textContent  = `${pct}%`;
+  document.getElementById("progress-fill").style.width = `${pct}%`;
+  WEEKS.forEach((w, wi) => {
+    const el = document.getElementById(`week-count-${wi}`);
+    if (!el) return;
+    let wTotal = 0, wDone = 0;
+    w.days.forEach(d => {
+      d.tasks.forEach((_, ti) => {
+        wTotal++;
+        if (checkedState[`${wi}-${d.day}-${ti}`]) wDone++;
+      });
+    });
+    el.textContent = `${wDone}/${wTotal} ✓`;
+  });
+}
+
+function toggleWeek(wi) {
+  const el = document.getElementById(`week-${wi}`);
+  const isOpen = el.classList.contains("open");
+  document.querySelectorAll(".week").forEach(w => w.classList.remove("open"));
+  if (!isOpen) el.classList.add("open");
+}
+
+function toggleTask(key, wi, day, tasks, taskEl, stampEl, dayKey) {
+  checkedState[key] = !checkedState[key];
+  taskEl.classList.toggle("done", !!checkedState[key]);
+
+  // Stamp logic: stamp when day becomes fully complete, clear if unchecked
+  if (isDayComplete(wi, day, tasks)) {
+    if (!stampState[dayKey]) {
+      stampState[dayKey] = fmtDate(new Date());
+    }
+  } else {
+    // Only clear if it wasn't a pre-stamp (pre-stamps are locked)
+    if (!PRE_STAMPS[dayKey]) {
+      delete stampState[dayKey];
+    }
+  }
+  updateStampEl(dayKey, stampEl);
+  saveState();
+  updateProgress();
+}
+
+const container = document.getElementById("weeks-container");
+
+WEEKS.forEach((week, wi) => {
+  const weekDiv = document.createElement("div");
+  weekDiv.className = "week" + (wi === 0 ? " open" : "");
+  weekDiv.id = `week-${wi}`;
+
+  const header = document.createElement("button");
+  header.className = "week-header";
+  header.onclick = () => toggleWeek(wi);
+  header.innerHTML = `
+    <div>
+      <div class="week-title">${week.title}</div>
+      <div class="week-subtitle">${week.subtitle}</div>
+    </div>
+    <div class="week-count" id="week-count-${wi}">0/0 ✓</div>
+  `;
+
+  const body = document.createElement("div");
+  body.className = "week-body";
+
+  week.days.forEach(day => {
+    const dayKey = `${wi}-${day.day}`;
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "day";
+
+    const stampEl = document.createElement("span");
+    stampEl.className = "day-stamp";
+    updateStampEl(dayKey, stampEl);
+
+    dayDiv.innerHTML = `
+      <div class="day-head">
+        <span class="day-num">${String(day.day).padStart(2, "0")}</span>
+        <span class="day-label">Day ${String(day.day).padStart(2, "0")}</span>
+      </div>
+    `;
+    dayDiv.querySelector(".day-head").appendChild(stampEl);
+
+    day.tasks.forEach((task, ti) => {
+      const key    = `${wi}-${day.day}-${ti}`;
+      const meta   = platformMeta[task.p];
+      const isDone = !!checkedState[key];
+
+      const taskEl = document.createElement("div");
+      taskEl.className = `task ${meta.cls}${isDone ? " done" : ""}`;
+      taskEl.innerHTML = `
+        <input type="checkbox" ${isDone ? "checked" : ""}>
+        <div class="task-content">
+          <div class="task-badges">
+            <span class="task-platform">${meta.label}</span>
+            <span class="task-time">~${task.time} min</span>
+          </div>
+          <div class="task-text">${task.action}</div>
+        </div>
+      `;
+
+      const cb = taskEl.querySelector("input");
+      cb.addEventListener("change", () => toggleTask(key, wi, day.day, day.tasks, taskEl, stampEl, dayKey));
+      taskEl.addEventListener("click", (e) => {
+        if (e.target === cb) return;
+        cb.checked = !cb.checked;
+        toggleTask(key, wi, day.day, day.tasks, taskEl, stampEl, dayKey);
+      });
+
+      dayDiv.appendChild(taskEl);
+    });
+
+    body.appendChild(dayDiv);
+  });
+
+  weekDiv.appendChild(header);
+  weekDiv.appendChild(body);
+  container.appendChild(weekDiv);
+});
+
+updateProgress();
+</script>
+
+
+</body></html>
