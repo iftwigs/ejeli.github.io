@@ -143,6 +143,32 @@ nav {
   padding: 52px 0 44px;
 }
 
+.hero-name {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text);
+  margin-bottom: 12px;
+  transition: color var(--transition);
+}
+
+.hero-bio {
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin-top: -28px;
+  margin-bottom: 44px;
+  transition: color var(--transition);
+}
+
+.read-more {
+  color: var(--accent);
+  transition: opacity var(--transition);
+}
+.read-more:hover { opacity: 0.7; }
+
 .tagline {
   color: var(--text);
   font-size: 18px;
