@@ -220,8 +220,28 @@ nav {
 
 .about-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 180px 1fr 1fr;
   gap: 40px;
+  align-items: start;
+}
+
+.about-photo-col {
+  padding-top: 4px;
+}
+
+.about-photo {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  object-position: center top;
+  filter: grayscale(20%) contrast(1.05);
+  border: 1px solid var(--border);
+  transition: border-color var(--transition), filter var(--transition);
+}
+
+.about-photo:hover {
+  filter: grayscale(0%) contrast(1.05);
+  border-color: var(--accent);
 }
 
 .about-body {
@@ -308,6 +328,7 @@ footer {
   .container { padding: 0 20px; }
   .gallery-teaser { grid-template-columns: repeat(2, 1fr); }
   .about-grid { grid-template-columns: 1fr; gap: 28px; }
+  .about-photo { max-width: 160px; }
   .masonry { column-count: 1; }
   .nav-links { gap: 14px; font-size: 10px; }
   .tagline { font-size: 15px; }
