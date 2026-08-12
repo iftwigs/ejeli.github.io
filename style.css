@@ -200,6 +200,29 @@ nav {
   transition: background var(--transition), border-color var(--transition);
 }
 
+/* real artwork images — teaser crops to a uniform grid */
+.gallery-teaser { align-items: start; }
+
+.gallery-teaser a {
+  display: block;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  transition: border-color var(--transition);
+}
+
+.gallery-teaser .artwork-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  transition: opacity var(--transition);
+}
+
+.gallery-teaser a:hover .artwork-img { border-color: var(--accent); opacity: 0.85; }
+
 .view-all {
   color: var(--accent);
   font-size: 10px;
@@ -231,6 +254,7 @@ nav {
 
 .about-photo {
   width: 100%;
+  height: auto;          /* beat the img width/height attribute hint so aspect-ratio wins */
   aspect-ratio: 3/4;
   object-fit: cover;
   object-position: center top;
@@ -312,11 +336,66 @@ footer {
 .artwork:nth-child(3n+2) .artwork-placeholder { min-height: 140px; }
 .artwork:nth-child(3n)   .artwork-placeholder { min-height: 200px; }
 
+/* masonry keeps each artwork's own proportions — no cropping */
+.artwork .artwork-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  transition: border-color var(--transition), opacity var(--transition);
+}
+
+.artwork a:hover .artwork-img { border-color: var(--accent); opacity: 0.85; }
+
 .artwork-title {
   color: var(--text-muted);
   font-size: 10px;
   padding: 6px 0 0;
   transition: color var(--transition);
+}
+
+.artwork-meta {
+  color: var(--text-muted);
+  font-size: 9px;
+  opacity: 0.7;
+  padding: 2px 0 0;
+}
+
+.artwork-title a { color: inherit; }
+.artwork-title a:hover { color: var(--accent); }
+
+/* ── Series pages (two roads, dialogues) ────────────────── */
+.series-intro {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.8;
+  max-width: 560px;
+  padding-bottom: 28px;
+}
+
+/* series pages use a row-major grid, not columns — pages must read left-to-right */
+.series-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding-bottom: 40px;
+}
+
+.series-gallery .artwork { margin-bottom: 0; }
+
+.series-end {
+  padding-bottom: 52px;
+}
+
+@media (max-width: 900px) {
+  .series-gallery { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .series-gallery { grid-template-columns: 1fr; }
 }
 
 /* ── Responsive ─────────────────────────────────────────── */
