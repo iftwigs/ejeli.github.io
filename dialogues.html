@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ejeli — dialogues series</title>
+  <meta name="description" content="watercolours of conversations — figures and cats talking, mostly at night.">
+  <meta property="og:title" content="ejeli — dialogues series">
+  <meta property="og:description" content="watercolours of conversations — figures and cats talking, mostly at night.">
+  <meta property="og:image" content="https://ejeli.com/images/dialogues-1.jpg">
+  <meta property="og:url" content="https://ejeli.com/dialogues.html">
+  <link rel="stylesheet" href="style.css">
+  <!-- apply stored theme before first paint to prevent flash -->
+  <script>if(localStorage.getItem('ejeli-theme')==='light')document.documentElement.classList.add('light');</script>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo">EJELI</a>
+        <div class="nav-links">
+          <a href="gallery.html">gallery</a>
+          <a href="index.html#about">about</a>
+          <a href="index.html#contact">contact</a>
+          <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">light</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <div class="gallery-header">
+        <a href="gallery.html" class="back-link">← gallery</a>
+        <p class="section-label">dialogues series</p>
+      </div>
+
+      <p class="series-intro">watercolours of conversations — figures and cats talking, mostly at night.<br><span class="artwork-meta">watercolour · 5 pieces</span></p>
+
+      <div class="series-gallery">
+        <div class="artwork">
+          <a href="images/dialogues-1.jpg" aria-label="dialogues series, piece 1 — open full size">
+            <img src="images/dialogues-1.jpg" alt="dialogues series, piece 1 of 5" class="artwork-img" width="1101" height="1600" loading="lazy">
+          </a>
+          <p class="artwork-meta">piece 1 / 5</p>
+        </div>
+        <div class="artwork">
+          <a href="images/dialogues-2.jpg" aria-label="dialogues series, piece 2 — open full size">
+            <img src="images/dialogues-2.jpg" alt="dialogues series, piece 2 of 5" class="artwork-img" width="1375" height="1600" loading="lazy">
+          </a>
+          <p class="artwork-meta">piece 2 / 5</p>
+        </div>
+        <div class="artwork">
+          <a href="images/dialogues-3.jpg" aria-label="dialogues series, piece 3 — open full size">
+            <img src="images/dialogues-3.jpg" alt="dialogues series, piece 3 of 5" class="artwork-img" width="1146" height="1600" loading="lazy">
+          </a>
+          <p class="artwork-meta">piece 3 / 5</p>
+        </div>
+        <div class="artwork">
+          <a href="images/dialogues-4.jpg" aria-label="dialogues series, piece 4 — open full size">
+            <img src="images/dialogues-4.jpg" alt="dialogues series, piece 4 of 5" class="artwork-img" width="1116" height="1600" loading="lazy">
+          </a>
+          <p class="artwork-meta">piece 4 / 5</p>
+        </div>
+        <div class="artwork">
+          <a href="images/dialogues-5.jpg" aria-label="dialogues series, piece 5 — open full size">
+            <img src="images/dialogues-5.jpg" alt="dialogues series, piece 5 of 5" class="artwork-img" width="1130" height="1600" loading="lazy">
+          </a>
+          <p class="artwork-meta">piece 5 / 5</p>
+        </div>
+      </div>
+
+      <p class="series-end"><a href="gallery.html" class="back-link">← back to gallery</a></p>
+
+    </div>
+  </main>
+
+  <footer id="contact">
+    <div class="container">
+      <div class="footer-inner">
+        <span class="section-label">contact</span>
+        <span class="footer-links">
+          <a href="mailto:k4www4@gmail.com">k4www4@gmail.com</a>
+          &nbsp;/&nbsp;
+          <a href="https://ejeli.com" target="_blank" rel="noopener noreferrer">ejeli.com</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var stored = localStorage.getItem('ejeli-theme');
+      var btn = document.getElementById('theme-toggle');
+      if (stored === 'light') {
+        btn.textContent = 'dark';
+      }
+      btn.addEventListener('click', function () {
+        var isLight = document.documentElement.classList.toggle('light');
+        localStorage.setItem('ejeli-theme', isLight ? 'light' : 'dark');
+        btn.textContent = isLight ? 'dark' : 'light';
+      });
+    })();
+  </script>
+
+</body>
+</html>
