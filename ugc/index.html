@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elizaveta E. — UGC Portfolio</title>
+<meta name="description" content="UGC creator — short vertical video for apps, art supplies and craft brands. Concept, script, filming, voice-over, subtitles.">
+<meta property="og:title" content="Elizaveta E. — UGC Portfolio">
+<meta property="og:description" content="Short vertical video for apps, art supplies and craft brands.">
+<meta property="og:image" content="https://ejeli.com/ugc/v/poster3.jpg">
+<meta property="og:type" content="website">
+<style>
+  @font-face {
+    font-family: 'JetBrains Mono'; font-style: normal; font-weight: 300; font-display: swap;
+    src: url('../fonts/jetbrains-mono-light-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap;
+    src: url('../fonts/jetbrains-mono-regular-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: swap;
+    src: url('../fonts/jetbrains-mono-bold-latin.woff2') format('woff2');
+  }
+
+  /* Trace design tokens — light. Single-theme on purpose: this is the app's light identity. */
+  :root {
+    --bg: #F4F2EC;
+    --surface: #FFFFFF;
+    --text: #221E2B;
+    --soft: #8A8394;
+    --pri: #FF5C8A;
+    --pri-dark: #E23E70;
+    --pos: #B26B12;
+    --line: #E7E3D9;
+    --taupe: #DED9CD;
+    --edge: #221E2B;
+    --shadow: #DED9CD;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  .statusline {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 20px 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 44px;
+  }
+  .mark { font-size: 15px; font-weight: 700; letter-spacing: -0.4px; }
+  .mark .dot { color: var(--pri); }
+  .statusline .role { font-size: 12px; color: var(--soft); }
+
+  section { margin-bottom: 48px; }
+
+  h1 {
+    font-size: 40px; font-weight: 700; letter-spacing: -1.6px; line-height: 1.1;
+    text-wrap: balance; margin-bottom: 18px;
+  }
+  h1 .dot { color: var(--pri); }
+  .lede { font-size: 15px; max-width: 58ch; }
+  .lede + .lede { margin-top: 11px; color: var(--soft); }
+  .lede strong { font-weight: 700; color: var(--text); }
+
+  .niches { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .niche {
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 5px 11px; border-radius: 999px; background: var(--taupe); color: var(--text);
+  }
+
+  .label {
+    font-size: 11px; letter-spacing: 0.11em; text-transform: uppercase; color: var(--soft);
+    padding-bottom: 8px; border-bottom: 1px solid var(--line); margin-bottom: 20px;
+    display: flex; justify-content: space-between; gap: 12px;
+  }
+  .label .count { color: var(--taupe); }
+
+  /* --- examples --- */
+  .examples { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  figure { display: flex; flex-direction: column; }
+  .frame {
+    border-radius: 14px; border: 1px solid var(--line); background: var(--surface);
+    overflow: hidden; line-height: 0;
+  }
+  .frame video { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; display: block; }
+  figcaption { line-height: 1.45; }
+  .fmt {
+    font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
+    margin-top: 13px; color: var(--soft);
+    display: flex; justify-content: space-between; gap: 8px;
+  }
+  .fmt .dur { font-variant-numeric: tabular-nums; color: var(--taupe); }
+  .who { font-size: 14px; font-weight: 700; margin-top: 3px; }
+  .note { font-size: 12px; color: var(--soft); margin-top: 5px; }
+
+  /* --- services --- */
+  .packs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .pack {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px; display: flex; flex-direction: column; gap: 7px;
+  }
+  .pack.wide { grid-column: 1 / -1; }
+  .pack h3 { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; }
+  .pack p, .pack li { font-size: 13px; color: var(--soft); }
+  .pack ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .pack ul li::before { content: "\00B7 "; color: var(--pri); }
+  .pack.feature { border-color: var(--pri); box-shadow: 0 1px 0 var(--shadow); }
+
+  .cta-row { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn {
+    display: inline-block; font-size: 14px; text-decoration: none; font-family: inherit;
+    background: var(--edge); color: var(--surface); border: 1px solid var(--edge);
+    border-radius: 999px; padding: 12px 22px;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .btn.ghost { background: var(--surface); color: var(--text); }
+  .btn:hover { background: var(--pri); border-color: var(--pri); color: var(--surface); }
+  .btn:focus-visible { outline: 2px solid var(--pri); outline-offset: 3px; }
+
+  .contact {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
+    background: var(--line); border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden; margin-bottom: 18px;
+  }
+  .contact div { background: var(--surface); padding: 15px 16px; }
+  .contact dt { font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--soft); }
+  .contact dd { font-size: 14px; margin-top: 5px; }
+  .contact a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--pri); }
+  .contact a:hover { color: var(--pri-dark); }
+
+  footer {
+    border-top: 1px solid var(--line); padding-top: 20px; font-size: 12px; color: var(--soft);
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  footer a { color: var(--soft); text-decoration: none; border-bottom: 1px solid var(--taupe); }
+  footer a:hover { color: var(--text); border-bottom-color: var(--pri); }
+
+  @media (max-width: 620px) {
+    h1 { font-size: 30px; letter-spacing: -1.1px; }
+    .examples { grid-template-columns: 1fr; gap: 28px; }
+    .packs { grid-template-columns: 1fr; }
+    .contact { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="statusline">
+    <span class="mark">Elizaveta E<span class="dot">.</span></span>
+    <span class="role">UGC creator</span>
+  </header>
+
+  <section>
+    <h1>Let's collaborate<span class="dot">.</span></h1>
+    <p class="lede">The app in the first video is mine — I built it, shipped it, then shot the ad for it.
+      The paints in the other two are what I actually work with, not props somebody sent me.</p>
+    <p class="lede">That's the range I'm useful in: a product demo a software team recognises, and a craft
+      video by someone who knows how the material behaves. 15-second hooks up to two-minute reviews.</p>
+    <div class="niches">
+      <span class="niche">#apps</span>
+      <span class="niche">#fintech</span>
+      <span class="niche">#art&nbsp;supplies</span>
+      <span class="niche">#craft</span>
+      <span class="niche">#stationery</span>
+      <span class="niche">#lifestyle</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="label"><span>UGC examples</span><span class="count">3 pieces</span></div>
+    <div class="examples">
+
+      <figure>
+        <div class="frame">
+          <video src="v/video3.mp4" poster="v/poster3.jpg" controls playsinline preload="none"></video>
+        </div>
+        <figcaption>
+          <span class="fmt"><span>Problem / solution</span><span class="dur">0:30</span></span>
+          <span class="who">Trace — money app</span>
+          <span class="note">Screen recording cut against a before/after piece to camera.</span>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <div class="frame">
+          <video src="v/video1.mp4" poster="v/poster1.jpg" controls playsinline preload="none"></video>
+        </div>
+        <figcaption>
+          <span class="fmt"><span>Review / storytelling</span><span class="dur">0:45</span></span>
+          <span class="who">Acrylic markers</span>
+          <span class="note">First impression, then the product changing my mind about it.</span>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <div class="frame">
+          <video src="v/video2.mp4" poster="v/poster2.jpg" controls playsinline preload="none"></video>
+        </div>
+        <figcaption>
+          <span class="fmt"><span>Unboxing / ASMR</span><span class="dur">2:26</span></span>
+          <span class="who">Metamorphosis watercolours</span>
+          <span class="note">Texture-first, close and quiet. Works with the sound off.</span>
+        </figcaption>
+      </figure>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="label"><span>About me</span></div>
+    <p class="lede">I paint, and I write software. Trace — the money app in the first video — is my own:
+      I built it, put it on the App Store, and made its first ad. The watercolours and the markers are things
+      I use every week, which is why those videos are shot close and slow instead of spun around in the air.</p>
+    <p class="lede">Everything is mine end to end: concept, script, light, camera, voice, edit. A new hook on
+      the same footage comes back the next morning.</p>
+  </section>
+
+  <section>
+    <div class="label"><span>Services</span></div>
+    <div class="packs">
+
+      <div class="pack feature">
+        <h3>1 video</h3>
+        <p>One concept, scripted, shot and edited. 9:16, any length up to 2:30.</p>
+      </div>
+
+      <div class="pack">
+        <h3>3 videos</h3>
+        <p>Same product, three angles &mdash; enough to actually test.</p>
+      </div>
+
+      <div class="pack">
+        <h3>5 videos</h3>
+        <p>A month of posts out of one shoot.</p>
+      </div>
+
+      <div class="pack wide">
+        <h3>Testing package</h3>
+        <ul>
+          <li>2 base concepts</li>
+          <li>4 hooks</li>
+          <li>2 CTAs</li>
+          <li>10 video variations to A/B test</li>
+        </ul>
+      </div>
+
+      <div class="pack wide">
+        <h3>Extras</h3>
+        <ul>
+          <li>Raw footage</li>
+          <li>Product and lifestyle photography</li>
+          <li>Additional hooks</li>
+          <li>Organic retainers</li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="cta-row"><a class="btn" href="mailto:k4www4@gmail.com?subject=UGC%20brief">Contact for all rates</a></div>
+  </section>
+
+  <section>
+    <div class="label"><span>Let's chat</span></div>
+    <dl class="contact">
+      <div><dt>Email</dt><dd><a href="mailto:k4www4@gmail.com">k4www4@gmail.com</a></dd></div>
+      <div><dt>Instagram</dt><dd><a href="https://instagram.com/ezhe.li" rel="me">@ezhe.li</a></dd></div>
+    </dl>
+    <div class="cta-row">
+      <a class="btn" href="mailto:k4www4@gmail.com?subject=UGC%20brief">Send a brief</a>
+    </div>
+  </section>
+
+  <footer>
+    <span>ejeli &middot; 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>
